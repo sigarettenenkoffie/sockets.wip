@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29920.165
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoStreamingServer", "VideoStreamingServer\VideoStreamingServer.csproj", "{37DA4A69-6CEE-47A6-97F7-F5416E092D91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoStreamingClient", "VideoStreamingClient\VideoStreamingClient.csproj", "{061F7D09-B170-4DCC-B5A9-FCFF50F2A2CC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{37DA4A69-6CEE-47A6-97F7-F5416E092D91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37DA4A69-6CEE-47A6-97F7-F5416E092D91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37DA4A69-6CEE-47A6-97F7-F5416E092D91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37DA4A69-6CEE-47A6-97F7-F5416E092D91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{061F7D09-B170-4DCC-B5A9-FCFF50F2A2CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{061F7D09-B170-4DCC-B5A9-FCFF50F2A2CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{061F7D09-B170-4DCC-B5A9-FCFF50F2A2CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{061F7D09-B170-4DCC-B5A9-FCFF50F2A2CC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D7B4CC9F-C206-4B4C-BB62-B9531E16238A}
+	EndGlobalSection
+EndGlobal
