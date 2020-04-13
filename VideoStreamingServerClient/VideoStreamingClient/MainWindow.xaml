@@ -5,8 +5,49 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VideoStreamingClient"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="717.444" Width="824.931">
     <Grid>
-        
+        <GroupBox Header="Info : this is what the server will understand ..." HorizontalAlignment="Left" Height="666" Margin="10,10,0,0" VerticalAlignment="Top" Width="334" >
+            <Grid  Margin="0,0,0,0"  Background="#FFE0F3F3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="18*"/>
+                    <ColumnDefinition Width="5*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="tbkDictionary" HorizontalAlignment="Left" Margin="0,0,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Background="Transparent"/>
+
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="grpStart" Header="Start connection" HorizontalAlignment="Left" Height="100" Margin="355,10,0,0" VerticalAlignment="Top" Width="452">
+            <Grid>
+                <Button x:Name="btnTest" Content="Test connection" HorizontalAlignment="Left" Height="29" Margin="10,10,0,0" VerticalAlignment="Top" Width="104" Click="BtnTest_Click"/>
+                <TextBox x:Name="txtActiveFolder" HorizontalAlignment="Left" Height="24" Margin="10,44,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="420" IsEnabled="False"/>
+
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="grpStop" Header="Stop connection" HorizontalAlignment="Left" Height="70" Margin="355,115,0,0" VerticalAlignment="Top" Width="452">
+            <Grid>
+                <Button x:Name="btnStop" Content="Stop connection" HorizontalAlignment="Left" Height="29" Margin="10,10,0,0" VerticalAlignment="Top" Width="104" Click="BtnStop_Click"/>
+
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="grpInstruction" Header="Communication" HorizontalAlignment="Left" Height="135" Margin="355,190,0,0" VerticalAlignment="Top" Width="452">
+            <Grid>
+                <Button x:Name="btnSend" Content="Send" HorizontalAlignment="Left" Height="29" Margin="326,8,0,0" VerticalAlignment="Top" Width="104" Click="BtnSend_Click" />
+                <ComboBox x:Name="cmbInstructions" HorizontalAlignment="Left" Height="27" Margin="10,10,0,0" VerticalAlignment="Top" Width="226" SelectionChanged="CmbInstructions_SelectionChanged"/>
+                <Label x:Name="lblArgument1" Content="" HorizontalAlignment="Left" Margin="10,48,0,0" VerticalAlignment="Top" Width="226"/>
+                <Label x:Name="lblArgument2" Content="" HorizontalAlignment="Left" Margin="10,77,0,0" VerticalAlignment="Top" Width="226"/>
+                <TextBox x:Name="txtArgument1" HorizontalAlignment="Left" Height="26" Margin="241,48,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="189"/>
+                <TextBox x:Name="txtArgument2" HorizontalAlignment="Left" Height="26" Margin="241,77,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="189"/>
+
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="grpResponse" Header="Server response" HorizontalAlignment="Left" Height="345" Margin="355,331,0,0" VerticalAlignment="Top" Width="452">
+            <Grid>
+                <ScrollViewer Margin="0,0,0,0">
+                    <TextBlock x:Name="tbkResponse" HorizontalAlignment="Left"  Margin="0,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" IsEnabled="False" />
+                </ScrollViewer>
+            </Grid>
+        </GroupBox>
+
     </Grid>
 </Window>
