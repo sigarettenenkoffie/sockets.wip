@@ -69,7 +69,22 @@ namespace VideoStreamingServer
 
         private void ExecuteServer()
         {
-            
+            IPEndPoint serverEndPoint = new IPEndPoint(ipAddress, port);
+            listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            try
+            {
+                listener.Bind(serverEndPoint);
+                listener.Listen(backlog: numberOfClients);
+
+                tbkInfo.Text = $"Socket server started at : {DateTime.Now:dd/MM/yyyy HH:mm:ss}\n";
+                tbkInfo.Text = $"Listening to IP : {ipAddress}\n" + tbkInfo.Text;
+                tbkInfo.Text = $"Endpoint : {serverEndPoint}\n" + tbkInfo.Text;
+                tbkInfo.Text = $"Maximum number of connections : {numberOfClients}\n" + tbkInfo.Text;
+            }
+            catch (System.Exception ex)
+            {
+
+            }
 
         }
 
