@@ -22,10 +22,16 @@
                 <Label Content="Video folder:" HorizontalAlignment="Left" Margin="297,10,0,0" VerticalAlignment="Top" Width="202"/>
                 <Label x:Name="lblVideoFolder" Content="c:\video" HorizontalAlignment="Left" Margin="290,41,0,0" VerticalAlignment="Top" Width="202" BorderBrush="Silver" BorderThickness="2" Height="27" />
                 <Button x:Name="btnSelectVideoFolder" Content="..." HorizontalAlignment="Left" Margin="497,41,0,0" VerticalAlignment="Top" Width="36" Click="btnSelectVideoFolder_Click" Height="27"/>
-                <Button x:Name="btnStartServer" Content="Start Server" HorizontalAlignment="Left" Margin="615,13,0,0" VerticalAlignment="Top" Width="106" Click="btnStartServer_Click" Height="21"/>
-                <Button x:Name="btnStopServer" Content="Stop Server" HorizontalAlignment="Left" Margin="615,46,0,0" VerticalAlignment="Top" Width="106" Click="btnStopServer_Click" Height="22"/>
 
 
+
+
+            </Grid>
+        </GroupBox>
+        <GroupBox>
+            <Grid>
+                <Button x:Name="btnStartServer" Content="Start Server" HorizontalAlignment="Left" Margin="618,34,0,0" VerticalAlignment="Top" Width="106" Click="btnStartServer_Click" Height="21"/>
+                <Button x:Name="btnStopServer" Content="Stop Server" HorizontalAlignment="Left" Margin="618,67,0,0" VerticalAlignment="Top" Width="106" Click="btnStopServer_Click" Height="22"/>
             </Grid>
         </GroupBox>
         <GroupBox x:Name="grpServerInfo" Header="Connection Info" Margin="10,119,9.6,10">

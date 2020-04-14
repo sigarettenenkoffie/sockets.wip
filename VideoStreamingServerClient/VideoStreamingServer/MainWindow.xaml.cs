@@ -14,6 +14,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using SocketLib;
 using System.Windows.Forms;
+using System.Net;
+using System.Net.Sockets;
 
 namespace VideoStreamingServer
 {
@@ -22,7 +24,12 @@ namespace VideoStreamingServer
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string videoFolder;
+        public string videoFolder;
+        public IPAddress ipAddress;
+        public int port;
+        public Socket listener;
+        private int numberOfClients = 20;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -51,12 +58,28 @@ namespace VideoStreamingServer
 
         private void btnStartServer_Click(object sender, RoutedEventArgs e)
         {
+            btnStartServer.IsEnabled = false;
+            btnStopServer.IsEnabled = true;
+            grpConfig.IsEnabled = false;
+
+            ipAddress = IPAddress.Parse(cmbIp.SelectedItem.ToString());
+            port = int.Parse(txtPort.Text);
+            ExecuteServer();
+        }
+
+        private void ExecuteServer()
+        {
+            
 
         }
 
         private void btnStopServer_Click(object sender, RoutedEventArgs e)
         {
-
+            btnStartServer.IsEnabled = true;
+            btnStopServer.IsEnabled = false;
+            grpConfig.IsEnabled = true;
+            listener.Close();
+            tbkInfo.Text = $"Socket server stopped at : {DateTime.Now:dd/MM/yyyy HH:mm:ss} \n" + tbkInfo.Text;
         }
     }
 }
