@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using SocketLib;
+
 
 namespace VideoStreamingServer
 {
@@ -23,6 +25,13 @@ namespace VideoStreamingServer
         public MainWindow()
         {
             InitializeComponent();
+            DoStartup();
+        }
+
+        private void DoStartup()
+        {
+            cmbIp.ItemsSource = Helper.GetActiveIP4s();
+            cmbIp.SelectedIndex = 0;
         }
 
         private void btnSelectVideoFolder_Click(object sender, RoutedEventArgs e)

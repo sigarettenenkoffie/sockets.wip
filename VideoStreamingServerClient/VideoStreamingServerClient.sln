@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoStreamingServer", "Vid
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VideoStreamingClient", "VideoStreamingClient\VideoStreamingClient.csproj", "{061F7D09-B170-4DCC-B5A9-FCFF50F2A2CC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocketLib", "SocketLib\SocketLib.csproj", "{AB9D98F5-87A9-4E75-909F-E715AC60475F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{061F7D09-B170-4DCC-B5A9-FCFF50F2A2CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{061F7D09-B170-4DCC-B5A9-FCFF50F2A2CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{061F7D09-B170-4DCC-B5A9-FCFF50F2A2CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB9D98F5-87A9-4E75-909F-E715AC60475F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB9D98F5-87A9-4E75-909F-E715AC60475F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB9D98F5-87A9-4E75-909F-E715AC60475F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB9D98F5-87A9-4E75-909F-E715AC60475F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
