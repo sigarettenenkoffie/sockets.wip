@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Forms;
 
 namespace VideoStreamingServer
 {
@@ -20,14 +21,23 @@ namespace VideoStreamingServer
     /// </summary>
     public partial class MainWindow : Window
     {
+        private string videoFolder;
         public MainWindow()
         {
             InitializeComponent();
+            videoFolder = lblVideoFolder.Content.ToString();
         }
 
         private void btnSelectVideoFolder_Click(object sender, RoutedEventArgs e)
         {
-
+            FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
+            fbd.SelectedPath = lblVideoFolder.Content.ToString();
+            DialogResult result = fbd.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                lblVideoFolder.Content = fbd.SelectedPath;
+                videoFolder = fbd.SelectedPath;
+            }
         }
 
         private void btnStartServer_Click(object sender, RoutedEventArgs e)
