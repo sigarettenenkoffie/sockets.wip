@@ -14,6 +14,9 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using SocketLib;
 using System.Windows.Forms;
+using System.Net;
+using System.Net.Sockets;
+using System.Threading;
 
 namespace VideoStreamingServer
 {
@@ -22,7 +25,14 @@ namespace VideoStreamingServer
     /// </summary>
     public partial class MainWindow : Window
     {
-        private string videoFolder;
+        public string videoFolder;
+        public IPAddress ipAddress;
+        public int port;
+        public Socket listener;
+        private int numberOfClients = 20;
+        private int numberOfConnectionsLeft;
+        private bool keepOnGoing = true;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -51,12 +61,80 @@ namespace VideoStreamingServer
 
         private void btnStartServer_Click(object sender, RoutedEventArgs e)
         {
+            btnStartServer.IsEnabled = false;
+            btnStopServer.IsEnabled = true;
+            grpConfig.IsEnabled = false;
+
+            ipAddress = IPAddress.Parse(cmbIp.SelectedItem.ToString());
+            port = int.Parse(txtPort.Text);
+            ExecuteServer();
+        }
+
+        private void ExecuteServer()
+        {
+            IPEndPoint serverEndPoint = new IPEndPoint(ipAddress, port);
+            listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            try
+            {
+                listener.Bind(serverEndPoint);
+                listener.Listen(backlog: numberOfClients);
+                tbkInfo.Text = tbkInfo.Text.Insert(0, new string('-', 50) + "\n");
+                tbkInfo.Text = tbkInfo.Text.Insert(0, $"Socket server started at : {DateTime.Now:dd/MM/yyyy HH:mm:ss}\n");
+                tbkInfo.Text = tbkInfo.Text.Insert(0, $"Listening to IP : {ipAddress}\n");
+                tbkInfo.Text = tbkInfo.Text.Insert(0, $"Listening on port : {port}\n");
+                tbkInfo.Text = tbkInfo.Text.Insert(0, $"Endpoint : {serverEndPoint}\n");
+                tbkInfo.Text = tbkInfo.Text.Insert(0, $"Maximum number of connections : {numberOfClients}\n");
+
+                keepOnGoing = false;
+                while (keepOnGoing)
+                {
+                    if (listener.Poll(1000000, SelectMode.SelectRead)) // lost hang op
+                    {
+                        tbkInfo.Text = tbkInfo.Text.Insert(0, $"Waiting for client to accept\n");
+                        Socket client = listener.Accept(); // Blocks the thread until client connects
+                        if (!client.Connected)
+                        {
+                            tbkInfo.Text = $"Client failed to connect\n" + tbkInfo.Text;
+                            continue;
+                        }
+                        tbkInfo.Text = tbkInfo.Text.Insert(0, $"Client connected through address : {((IPEndPoint)client.LocalEndPoint).Address} and port {((IPEndPoint)client.LocalEndPoint).Port}");
+                        tbkInfo.Text = tbkInfo.Text.Insert(0, $"Number of possible connections left: {numberOfConnectionsLeft--}");
+
+                        //CommunicateWithClientAsync(client);
+                        keepOnGoing = false; // temporary !!!
+                    }
+                }
+
+                listener.Dispose();
+
+
+
+            }
+            catch (System.Exception ex)
+            {
+                if (keepOnGoing)
+                {
+                    tbkInfo.Text = $"Error : {ex.Message} \n" + tbkInfo.Text;
+                }
+            }
 
         }
 
         private void btnStopServer_Click(object sender, RoutedEventArgs e)
         {
+            btnStartServer.IsEnabled = true;
+            btnStopServer.IsEnabled = false;
+            grpConfig.IsEnabled = true;
+            keepOnGoing = false;
+            try
+            {
+                listener.Close();
+            }
+            catch
+            { }
+            listener = null;
 
+            tbkInfo.Text = $"Socket server stopped at : {DateTime.Now:dd/MM/yyyy HH:mm:ss} \n" + tbkInfo.Text;
         }
     }
 }
