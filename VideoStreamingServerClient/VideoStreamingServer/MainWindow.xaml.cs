@@ -30,6 +30,8 @@ namespace VideoStreamingServer
         public int port;
         public Socket listener;
         private int numberOfClients = 20;
+        private int numberOfConnectionsLeft;
+        private bool keepOnGoing = true;
 
         public MainWindow()
         {
@@ -76,23 +78,44 @@ namespace VideoStreamingServer
             {
                 listener.Bind(serverEndPoint);
                 listener.Listen(backlog: numberOfClients);
+                tbkInfo.Text = tbkInfo.Text.Insert(0, new string('-', 50) + "\n");
+                tbkInfo.Text = tbkInfo.Text.Insert(0, $"Socket server started at : {DateTime.Now:dd/MM/yyyy HH:mm:ss}\n");
+                tbkInfo.Text = tbkInfo.Text.Insert(0, $"Listening to IP : {ipAddress}\n");
+                tbkInfo.Text = tbkInfo.Text.Insert(0, $"Listening on port : {port}\n");
+                tbkInfo.Text = tbkInfo.Text.Insert(0, $"Endpoint : {serverEndPoint}\n");
+                tbkInfo.Text = tbkInfo.Text.Insert(0, $"Maximum number of connections : {numberOfClients}\n");
 
-                tbkInfo.Text = $"Socket server started at : {DateTime.Now:dd/MM/yyyy HH:mm:ss}\n";
-                tbkInfo.Text = $"Listening to IP : {ipAddress}\n" + tbkInfo.Text;
-                tbkInfo.Text = $"Endpoint : {serverEndPoint}\n" + tbkInfo.Text;
-                tbkInfo.Text = $"Maximum number of connections : {numberOfClients}\n" + tbkInfo.Text;
-
-                var cts = new CancellationTokenSource();
-                var tf = new TaskFactory(TaskCreationOptions.LongRunning, TaskContinuationOptions.None);
-                tf.StartNew(() =>
+                keepOnGoing = false;
+                while (keepOnGoing)
                 {
+                    if (listener.Poll(1000000, SelectMode.SelectRead)) // lost hang op
+                    {
+                        tbkInfo.Text = tbkInfo.Text.Insert(0, $"Waiting for client to accept\n");
+                        Socket client = listener.Accept(); // Blocks the thread until client connects
+                        if (!client.Connected)
+                        {
+                            tbkInfo.Text = $"Client failed to connect\n" + tbkInfo.Text;
+                            continue;
+                        }
+                        tbkInfo.Text = tbkInfo.Text.Insert(0, $"Client connected through address : {((IPEndPoint)client.LocalEndPoint).Address} and port {((IPEndPoint)client.LocalEndPoint).Port}");
+                        tbkInfo.Text = tbkInfo.Text.Insert(0, $"Number of possible connections left: {numberOfConnectionsLeft--}");
 
-                }, cts.Token);
-                
+                        //CommunicateWithClientAsync(client);
+                        keepOnGoing = false; // temporary !!!
+                    }
+                }
+
+                listener.Dispose();
+
+
+
             }
             catch (System.Exception ex)
             {
-
+                if (keepOnGoing)
+                {
+                    tbkInfo.Text = $"Error : {ex.Message} \n" + tbkInfo.Text;
+                }
             }
 
         }
@@ -102,7 +125,15 @@ namespace VideoStreamingServer
             btnStartServer.IsEnabled = true;
             btnStopServer.IsEnabled = false;
             grpConfig.IsEnabled = true;
-            listener.Close();
+            keepOnGoing = false;
+            try
+            {
+                listener.Close();
+            }
+            catch
+            { }
+            listener = null;
+
             tbkInfo.Text = $"Socket server stopped at : {DateTime.Now:dd/MM/yyyy HH:mm:ss} \n" + tbkInfo.Text;
         }
     }
