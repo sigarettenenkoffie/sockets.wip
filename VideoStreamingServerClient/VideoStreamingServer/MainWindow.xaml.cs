@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using SocketLib;
 using System.Windows.Forms;
 
 namespace VideoStreamingServer
@@ -25,6 +26,14 @@ namespace VideoStreamingServer
         public MainWindow()
         {
             InitializeComponent();
+
+            DoStartup();
+        }
+
+        private void DoStartup()
+        {
+            cmbIp.ItemsSource = Helper.GetActiveIP4s();
+            cmbIp.SelectedIndex = 0;
             videoFolder = lblVideoFolder.Content.ToString();
         }
 
