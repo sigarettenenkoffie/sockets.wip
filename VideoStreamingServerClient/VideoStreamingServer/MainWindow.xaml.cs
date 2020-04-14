@@ -16,6 +16,7 @@ using SocketLib;
 using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace VideoStreamingServer
 {
@@ -80,6 +81,14 @@ namespace VideoStreamingServer
                 tbkInfo.Text = $"Listening to IP : {ipAddress}\n" + tbkInfo.Text;
                 tbkInfo.Text = $"Endpoint : {serverEndPoint}\n" + tbkInfo.Text;
                 tbkInfo.Text = $"Maximum number of connections : {numberOfClients}\n" + tbkInfo.Text;
+
+                var cts = new CancellationTokenSource();
+                var tf = new TaskFactory(TaskCreationOptions.LongRunning, TaskContinuationOptions.None);
+                tf.StartNew(() =>
+                {
+
+                }, cts.Token);
+                
             }
             catch (System.Exception ex)
             {
