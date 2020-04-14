@@ -24,5 +24,20 @@ namespace VideoStreamingServer
         {
             InitializeComponent();
         }
+
+        private void btnSelectVideoFolder_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnStartServer_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnStopServer_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

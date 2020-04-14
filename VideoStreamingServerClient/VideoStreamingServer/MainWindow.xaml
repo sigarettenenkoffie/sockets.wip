@@ -5,8 +5,34 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VideoStreamingServer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Video Streaming Server" Height="450" Width="800">
+
     <Grid>
-        
+        <GroupBox x:Name="grpConfig" 
+                  Header="Settings" 
+                  Height="119" 
+                  Margin="10,0,9.6,0" 
+                  VerticalAlignment="Top">
+            <Grid Margin="10,0,13,-0.4">
+
+                <Label Content="Communication over Ip:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="176"/>
+                <ComboBox x:Name="cmbIp" HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top" Width="176" Height="23"/>
+                <Label Content="Port:" HorizontalAlignment="Left" Margin="213,10,0,0" VerticalAlignment="Top" Width="143"/>
+                <TextBox x:Name="txtPort" HorizontalAlignment="Left" Height="23" Margin="213,45,0,0" TextWrapping="Wrap" Text="80" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="47" TextAlignment="Center"/>
+                <Label Content="Video folder:" HorizontalAlignment="Left" Margin="297,10,0,0" VerticalAlignment="Top" Width="202"/>
+                <Label x:Name="lblVideoFolder" Content="c:\videos" HorizontalAlignment="Left" Margin="290,41,0,0" VerticalAlignment="Top" Width="202" BorderBrush="Silver" BorderThickness="2" Height="27" />
+                <Button x:Name="btnSelectVideoFolder" Content="..." HorizontalAlignment="Left" Margin="497,41,0,0" VerticalAlignment="Top" Width="36" Click="btnSelectVideoFolder_Click" Height="27"/>
+                <Button x:Name="btnStartServer" Content="Start Server" HorizontalAlignment="Left" Margin="615,13,0,0" VerticalAlignment="Top" Width="106" Click="btnStartServer_Click" Height="21"/>
+                <Button x:Name="btnStopServer" Content="Stop Server" HorizontalAlignment="Left" Margin="615,46,0,0" VerticalAlignment="Top" Width="106" Click="btnStopServer_Click" Height="22"/>
+
+
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="grpServerInfo" Header="Connection Info" Margin="10,119,9.6,10">
+            <ScrollViewer Margin="0,10,-0.6,-0.6" Grid.ColumnSpan="2">
+                <TextBlock x:Name="tbkInfo" HorizontalAlignment="Left"  Margin="0,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" />
+            </ScrollViewer>
+        </GroupBox>
+
     </Grid>
 </Window>
