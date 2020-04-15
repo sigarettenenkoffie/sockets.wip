@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Linq;
 using System.IO;
-using System.Windows;
-using System.Windows.Threading;
 
 namespace SocketLib
 {
