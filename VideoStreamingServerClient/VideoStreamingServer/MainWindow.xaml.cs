@@ -104,6 +104,9 @@ namespace VideoStreamingServer
                         }
                         tbkInfo.Text = tbkInfo.Text.Insert(0, $"Client connected through address : {((IPEndPoint)client.LocalEndPoint).Address} and port {((IPEndPoint)client.LocalEndPoint).Port}");
                         tbkInfo.Text = tbkInfo.Text.Insert(0, $"Number of possible connections left: {numberOfConnectionsLeft--}");
+                        
+                        var buffer = Encoding.UTF8.GetBytes(videoFolder);
+                        client.Send(buffer);
 
                         //CommunicateWithClientAsync(client);
                         keepOnGoing = false; // temporary !!!
