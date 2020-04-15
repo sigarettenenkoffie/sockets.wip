@@ -1,20 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace VideoStreamingClient
 {
@@ -25,6 +14,7 @@ namespace VideoStreamingClient
     {
         int serverPort = 0;
         IPAddress serverIP;
+        string directory = "";
 
         public MainWindow()
         {
@@ -34,8 +24,8 @@ namespace VideoStreamingClient
 
         private void StartUp()
         {
-            string directory = System.IO.Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName);
-            directory += "\\Video\\";
+            //string directory = System.IO.Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName);
+            //directory += "\\Video\\";
             string[] videoFiles = Directory.GetFiles(directory);
 
             foreach (var video in videoFiles)
@@ -62,6 +52,36 @@ namespace VideoStreamingClient
             }
         }
 
+        private void GetVideoFiles()
+        {
+            //string directory = System.IO.Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName);
+            //directory += "\\Video\\";
+            string[] videoFiles = Directory.GetFiles(directory);
+
+            foreach (var video in videoFiles)
+            {
+                cmbVideoFiles.Items.Add(video);
+            }
+        }
+
+        private void ReadConfiguration()
+        {
+
+            int.TryParse(txtPort.Text, out serverPort);
+
+            string ip = txtServerIP.Text.Trim();
+
+            try
+            {
+                serverIP = IPAddress.Parse(ip);
+            }
+            catch
+            {
+                ip = "127.0.0.1";
+                txtServerIP.Text = ip;
+            }
+        }
+        
         private string SendToServer(string command)
         {
             ReadConfiguration();
@@ -83,6 +103,12 @@ namespace VideoStreamingClient
             try
             {
                 clientSocket.Connect(server);
+
+                byte[] serverResponse = new byte[8019];
+                int messageLength = clientSocket.Receive(serverResponse);
+                directory = Encoding.ASCII.GetString(serverResponse, 0, messageLength).ToUpper().Trim();
+                GetVideoFiles();
+
                 return null;
             }
             catch (Exception message)
@@ -93,7 +119,6 @@ namespace VideoStreamingClient
 
         private void btnConnect_Click(object sender, RoutedEventArgs e)
         {
-            ReadConfiguration();
             SendToServer(null);
         }
 
