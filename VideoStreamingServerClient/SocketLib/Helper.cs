@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Linq;
+using System.IO;
 
 namespace SocketLib
 {
@@ -19,6 +20,24 @@ namespace SocketLib
                                where ip.AddressFamily == AddressFamily.InterNetwork
                                select ip.ToString());
             return activeIps;
+        }
+
+
+        public static void CloneDirectory(string root, string dest)
+        {
+            if (!Directory.Exists(dest))
+            {
+                Directory.CreateDirectory(dest);
+                Directory
+                    .GetFiles(root)
+                    .ToList()
+                    .ForEach(file => file.CopyTo(dest));
+            }
+        }
+
+        private static void CopyTo(this string file, string dest)
+        {
+            File.Copy(file, Path.Combine(dest, Path.GetFileName(file)));
         }
     }
 }

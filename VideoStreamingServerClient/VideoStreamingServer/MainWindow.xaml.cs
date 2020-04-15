@@ -17,6 +17,9 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.IO;
+using Path = System.IO.Path;
+using System.Reflection;
 
 namespace VideoStreamingServer
 {
@@ -25,7 +28,7 @@ namespace VideoStreamingServer
     /// </summary>
     public partial class MainWindow : Window
     {
-        public string videoFolder;
+        public string videoFolder = "c:\\AIT-PE-videos";
         public IPAddress ipAddress;
         public int port;
         public Socket listener;
@@ -36,15 +39,17 @@ namespace VideoStreamingServer
         public MainWindow()
         {
             InitializeComponent();
-
             DoStartup();
         }
 
         private void DoStartup()
         {
+            string videoPathInSolution = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, "Video");
+            Helper.CloneDirectory(videoPathInSolution, videoFolder);
+
             cmbIp.ItemsSource = Helper.GetActiveIP4s();
             cmbIp.SelectedIndex = 0;
-            videoFolder = lblVideoFolder.Content.ToString();
+            lblVideoFolder.Content = videoFolder;
         }
 
         private void btnSelectVideoFolder_Click(object sender, RoutedEventArgs e)
