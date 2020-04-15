@@ -14,7 +14,9 @@ namespace VideoStreamingClient
     {
         int serverPort = 0;
         IPAddress serverIP;
+        Socket clientSocket;
         string directory = "";
+
 
         public MainWindow()
         {
@@ -24,14 +26,7 @@ namespace VideoStreamingClient
 
         private void StartUp()
         {
-            //string directory = System.IO.Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName);
-            //directory += "\\Video\\";
-            //string[] videoFiles = Directory.GetFiles(directory);
-
-            //foreach (var video in videoFiles)
-            //{
-            //    cmbVideoFiles.Items.Add(video);
-            //}
+            btnDisconnect.IsEnabled = false;
         }
 
         private void ReadConfiguration()
@@ -54,8 +49,6 @@ namespace VideoStreamingClient
 
         private void GetVideoFiles()
         {
-            //string directory = System.IO.Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName);
-            //directory += "\\Video\\";
             string[] videoFiles = Directory.GetFiles(directory);
 
             foreach (var video in videoFiles)
@@ -64,15 +57,16 @@ namespace VideoStreamingClient
             }
         }
 
-
-
-        private string SendToServer(string command)
+        private void SendToServer()
         {
-            ReadConfiguration();
-            IPEndPoint server = new IPEndPoint(serverIP, serverPort);
+            string connection;
 
+            ReadConfiguration();
+
+            IPEndPoint server = new IPEndPoint(serverIP, serverPort);
             IPHostEntry clientHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             IPAddress clientIP = clientHostInfo.AddressList[0];
+
             foreach (var ip in clientHostInfo.AddressList)
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
@@ -82,7 +76,7 @@ namespace VideoStreamingClient
                 }
             }
 
-            Socket clientSocket = new Socket(clientIP.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            clientSocket = new Socket(clientIP.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
 
             try
             {
@@ -93,17 +87,21 @@ namespace VideoStreamingClient
                 directory = Encoding.ASCII.GetString(serverResponse, 0, messageLength).ToUpper().Trim();
                 GetVideoFiles();
 
-                return null;
+                connection = "Succesful connected to server";
+                lstClientBox.Items.Add(connection);
+                btnDisconnect.IsEnabled = true;
+                btnConnect.IsEnabled = false;
             }
-            catch (Exception message)
+            catch
             {
-                return "no response from the server";
+                connection = "No response from the server";
+                lstClientBox.Items.Add(connection);
             }
         }
 
         private void btnConnect_Click(object sender, RoutedEventArgs e)
         {
-            SendToServer(null);
+            SendToServer();
         }
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
@@ -125,6 +123,14 @@ namespace VideoStreamingClient
         private void btnStop_Click(object sender, RoutedEventArgs e)
         {
             mdaVideoPlayer.Stop();
+        }
+
+        private void btnDisconnect_Click(object sender, RoutedEventArgs e)
+        {
+            clientSocket.Disconnect(true);
+            string disconnected = "Disconnected from the server";
+            lstClientBox.Items.Add(disconnected);
+            btnConnect.IsEnabled = true;
         }
     }
 }
