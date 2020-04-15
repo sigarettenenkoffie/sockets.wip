@@ -10,13 +10,14 @@
         <MediaElement x:Name="mdaVideoPlayer" Margin="10,41,10,366"></MediaElement>
         <Label x:Name="lblPort" Content="Connect to port:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="99"/>
         <TextBox x:Name="txtPort" HorizontalAlignment="Left" Height="23" Margin="114,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="50" Text="80"/>
+        Title="Video Streaming Client" Height="834" Width="705">
         <Label x:Name="lblServerIP" Content="Server IP address:" HorizontalAlignment="Left" Margin="202,10,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="txtServerIP" HorizontalAlignment="Left" Height="23" Margin="310,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Text="127.0.0.1"/>
         <ComboBox x:Name="cmbVideoFiles" HorizontalAlignment="Left" Margin="569,10,0,0" VerticalAlignment="Top" Width="120"/>
         <Label x:Name="lblVideoName" Content="Choose video:" HorizontalAlignment="Left" Margin="479,10,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="btnPlay" Content="Play" HorizontalAlignment="Left" Margin="10,461,0,0" VerticalAlignment="Top" Width="110" Height="110"/>
-        <Button x:Name="btnPause" Content="Pause" HorizontalAlignment="Left" Margin="293,461,0,0" VerticalAlignment="Top" Width="110" Height="110"/>
-        <Button x:Name="btnStop" Content="Stop" HorizontalAlignment="Left" Margin="577,461,0,0" VerticalAlignment="Top" Width="110" Height="110"/>
+        <Button x:Name="btnPlay" Content="Play" HorizontalAlignment="Left" Margin="10,461,0,0" VerticalAlignment="Top" Width="110" Height="110" Click="btnPlay_Click"/>
+        <Button x:Name="btnPause" Content="Pause" HorizontalAlignment="Left" Margin="293,461,0,0" VerticalAlignment="Top" Width="110" Height="110" Click="btnPause_Click"/>
+        <Button x:Name="btnStop" Content="Stop" HorizontalAlignment="Left" Margin="577,461,0,0" VerticalAlignment="Top" Width="110" Height="110" Click="btnStop_Click"/>
         <ListBox x:Name="lstClientBox" HorizontalAlignment="Left" Height="200" Margin="10,590,0,0" VerticalAlignment="Top" Width="494"/>
         <Button x:Name="btnConnect" Content="Connect" HorizontalAlignment="Left" Margin="569,650,0,0" VerticalAlignment="Top" Width="75"/>
         <Button x:Name="btnExit" Content="Exit" HorizontalAlignment="Left" Margin="569,707,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.267,-0.1"/>

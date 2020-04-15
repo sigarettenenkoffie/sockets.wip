@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -19,6 +19,37 @@ namespace VideoStreamingClient
         public MainWindow()
         {
             InitializeComponent();
+            StartUp();
+        }
+
+        private void StartUp()
+        {
+            //string directory = System.IO.Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName);
+            //directory += "\\Video\\";
+            string[] videoFiles = Directory.GetFiles(directory);
+
+            foreach (var video in videoFiles)
+            {
+                cmbVideoFiles.Items.Add(video);
+            }
+        }
+
+        private void ReadConfiguration()
+        {
+
+            int.TryParse(txtPort.Text, out serverPort);
+
+            string ip = txtServerIP.Text.Trim();
+
+            try
+            {
+                serverIP = IPAddress.Parse(ip);
+            }
+            catch
+            {
+                ip = "127.0.0.1";
+                txtServerIP.Text = ip;
+            }
         }
 
         private void GetVideoFiles()
@@ -50,7 +81,7 @@ namespace VideoStreamingClient
                 txtServerIP.Text = ip;
             }
         }
-
+        
         private string SendToServer(string command)
         {
             ReadConfiguration();
