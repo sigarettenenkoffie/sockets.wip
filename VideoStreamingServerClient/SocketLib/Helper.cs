@@ -5,6 +5,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Linq;
 using System.IO;
+using System.Windows;
+using System.Windows.Threading;
 
 namespace SocketLib
 {
@@ -38,6 +40,13 @@ namespace SocketLib
         private static void CopyTo(this string file, string dest)
         {
             File.Copy(file, Path.Combine(dest, Path.GetFileName(file)));
+        }
+
+        private static Action EmptyDelegate = delegate () { };
+
+        public static void Refresh(this UIElement uiElement)
+        {
+            uiElement.Dispatcher.Invoke(DispatcherPriority.Render, new Action(delegate { }));
         }
     }
 }

@@ -20,6 +20,7 @@ using System.Threading;
 using System.IO;
 using Path = System.IO.Path;
 using System.Reflection;
+using System.Windows.Threading;
 
 namespace VideoStreamingServer
 {
@@ -77,6 +78,7 @@ namespace VideoStreamingServer
 
         private void ExecuteServer()
         {
+            numberOfConnectionsLeft = numberOfClients;
             IPEndPoint serverEndPoint = new IPEndPoint(ipAddress, port);
             listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             try
@@ -90,12 +92,11 @@ namespace VideoStreamingServer
                 tbkInfo.Text = tbkInfo.Text.Insert(0, $"Endpoint : {serverEndPoint}\n");
                 tbkInfo.Text = tbkInfo.Text.Insert(0, $"Maximum number of connections : {numberOfClients}\n");
 
-
                 while (keepOnGoing)
                 {
+                    tbkInfo.Refresh();
                     if (listener.Poll(1000000, SelectMode.SelectRead)) // lost hang op
                     {
-                        numberOfConnectionsLeft = numberOfClients;
                         tbkInfo.Text = tbkInfo.Text.Insert(0, $"Waiting for client to accept\n");
                         Socket client = listener.Accept(); // Blocks the thread until client connects
                         if (!client.Connected)
@@ -108,9 +109,6 @@ namespace VideoStreamingServer
                         
                         var buffer = Encoding.UTF8.GetBytes(videoFolder);
                         client.Send(buffer);
-
-                        //CommunicateWithClientAsync(client);
-                        keepOnGoing = false; // temporary !!!
                     }
                 }
 
