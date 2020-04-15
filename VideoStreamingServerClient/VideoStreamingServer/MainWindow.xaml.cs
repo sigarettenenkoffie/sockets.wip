@@ -90,11 +90,12 @@ namespace VideoStreamingServer
                 tbkInfo.Text = tbkInfo.Text.Insert(0, $"Endpoint : {serverEndPoint}\n");
                 tbkInfo.Text = tbkInfo.Text.Insert(0, $"Maximum number of connections : {numberOfClients}\n");
 
-                keepOnGoing = false;
+
                 while (keepOnGoing)
                 {
                     if (listener.Poll(1000000, SelectMode.SelectRead)) // lost hang op
                     {
+                        numberOfConnectionsLeft = numberOfClients;
                         tbkInfo.Text = tbkInfo.Text.Insert(0, $"Waiting for client to accept\n");
                         Socket client = listener.Accept(); // Blocks the thread until client connects
                         if (!client.Connected)
@@ -102,8 +103,8 @@ namespace VideoStreamingServer
                             tbkInfo.Text = $"Client failed to connect\n" + tbkInfo.Text;
                             continue;
                         }
-                        tbkInfo.Text = tbkInfo.Text.Insert(0, $"Client connected through address : {((IPEndPoint)client.LocalEndPoint).Address} and port {((IPEndPoint)client.LocalEndPoint).Port}");
-                        tbkInfo.Text = tbkInfo.Text.Insert(0, $"Number of possible connections left: {numberOfConnectionsLeft--}");
+                        tbkInfo.Text = tbkInfo.Text.Insert(0, $"Client connected through address : {((IPEndPoint)client.RemoteEndPoint).Address} and port {((IPEndPoint)client.RemoteEndPoint).Port}\n");
+                        tbkInfo.Text = tbkInfo.Text.Insert(0, $"Number of possible connections left: {--numberOfConnectionsLeft}\n");
                         
                         var buffer = Encoding.UTF8.GetBytes(videoFolder);
                         client.Send(buffer);
