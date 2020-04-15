@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Video Streaming Client" Height="831" Width="705">
     <Grid>
-        <MediaElement x:Name="mdaVideoPlayer" Margin="10,41,10,366"></MediaElement>
+        <MediaElement x:Name="mdaVideoPlayer" Margin="10,41,10,366" LoadedBehavior="Manual"></MediaElement>
         <Label x:Name="lblPort" Content="Connect to port:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="99"/>
         <TextBox x:Name="txtPort" HorizontalAlignment="Left" Height="23" Margin="114,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="50" Text="80"/>
         
