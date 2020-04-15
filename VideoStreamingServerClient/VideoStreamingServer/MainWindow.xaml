@@ -20,7 +20,7 @@
                 <Label Content="Port:" HorizontalAlignment="Left" Margin="213,10,0,0" VerticalAlignment="Top" Width="143"/>
                 <TextBox x:Name="txtPort" HorizontalAlignment="Left" Height="23" Margin="213,45,0,0" TextWrapping="Wrap" Text="80" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="47" TextAlignment="Center"/>
                 <Label Content="Video folder:" HorizontalAlignment="Left" Margin="297,10,0,0" VerticalAlignment="Top" Width="202"/>
-                <Label x:Name="lblVideoFolder" Content="c:\video" HorizontalAlignment="Left" Margin="290,41,0,0" VerticalAlignment="Top" Width="202" BorderBrush="Silver" BorderThickness="2" Height="27" />
+                <Label x:Name="lblVideoFolder" HorizontalAlignment="Left" Margin="290,41,0,0" VerticalAlignment="Top" Width="202" BorderBrush="Silver" BorderThickness="2" Height="27" />
                 <Button x:Name="btnSelectVideoFolder" Content="..." HorizontalAlignment="Left" Margin="497,41,0,0" VerticalAlignment="Top" Width="36" Click="btnSelectVideoFolder_Click" Height="27"/>
 
 
