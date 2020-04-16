@@ -21,6 +21,7 @@ using System.IO;
 using Path = System.IO.Path;
 using System.Reflection;
 using System.Windows.Threading;
+using System.Net.NetworkInformation;
 
 namespace VideoStreamingServer
 {
@@ -29,6 +30,7 @@ namespace VideoStreamingServer
     /// </summary>
     public partial class MainWindow : Window
     {
+        Server server = new Server();
         public string videoFolder = "c:\\AIT-PE-videos";
         public IPAddress ipAddress;
         public int port;
@@ -40,6 +42,8 @@ namespace VideoStreamingServer
         public MainWindow()
         {
             InitializeComponent();
+            server.VideoFolder = "c:\\AIT-PE-videos";
+            this.DataContext = server;
             DoStartup();
         }
 
@@ -48,9 +52,10 @@ namespace VideoStreamingServer
             string videoPathInSolution = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, "Video");
             Helper.CloneDirectory(videoPathInSolution, videoFolder);
 
-            cmbIp.ItemsSource = Helper.GetActiveIP4s();
+            //cmbIp.ItemsSource = Helper.GetActiveIP4s();
             cmbIp.SelectedIndex = 0;
-            lblVideoFolder.Content = videoFolder;
+            //lblVideoFolder.Content = videoFolder;
+
         }
 
         private void btnSelectVideoFolder_Click(object sender, RoutedEventArgs e)
@@ -61,7 +66,7 @@ namespace VideoStreamingServer
             if (result == System.Windows.Forms.DialogResult.OK)
             {
                 lblVideoFolder.Content = fbd.SelectedPath;
-                videoFolder = fbd.SelectedPath;
+                server.VideoFolder = fbd.SelectedPath;
             }
         }
 
@@ -71,9 +76,11 @@ namespace VideoStreamingServer
             btnStopServer.IsEnabled = true;
             grpConfig.IsEnabled = false;
 
-            ipAddress = IPAddress.Parse(cmbIp.SelectedItem.ToString());
-            port = int.Parse(txtPort.Text);
-            ExecuteServer();
+            server.IPAddress = IPAddress.Parse(cmbIp.SelectedItem.ToString());
+            server.Port = int.Parse(txtPort.Text);
+            //ipAddress = IPAddress.Parse(cmbIp.SelectedItem.ToString());
+            //port = int.Parse(txtPort.Text);
+            server.ExecuteServer();
         }
 
         private async void ExecuteServer()
@@ -143,6 +150,11 @@ namespace VideoStreamingServer
             listener = null;
 
             tbkInfo.Text = $"Socket server stopped at : {DateTime.Now:dd/MM/yyyy HH:mm:ss} \n" + tbkInfo.Text;
+        }
+
+        private void cmbIp_SourceUpdated(object sender, DataTransferEventArgs e)
+        {
+
         }
     }
 }
