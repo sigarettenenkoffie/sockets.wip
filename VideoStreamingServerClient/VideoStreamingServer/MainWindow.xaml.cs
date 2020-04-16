@@ -31,18 +31,16 @@ namespace VideoStreamingServer
     public partial class MainWindow : Window
     {
         Server server = new Server();
-        public string videoFolder = "c:\\AIT-PE-videos";
+        public string videoServerURL = "c:\\AIT-PE-videos";
         public IPAddress ipAddress;
         public int port;
         public Socket listener;
-        private int numberOfClients = 20;
-        private int numberOfConnectionsLeft;
-        private bool listening = true;
+
 
         public MainWindow()
         {
             InitializeComponent();
-            server.VideoFolder = "c:\\AIT-PE-videos";
+            server.ServerURL = "c:\\AIT-PE-videos";
             this.DataContext = server;
             DoStartup();
         }
@@ -50,12 +48,7 @@ namespace VideoStreamingServer
         private void DoStartup()
         {
             string videoPathInSolution = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.Parent.FullName, "Video");
-            Helper.CloneDirectory(videoPathInSolution, videoFolder);
-
-            //cmbIp.ItemsSource = Helper.GetActiveIP4s();
-            //cmbIp.SelectedIndex = 0;
-            //lblVideoFolder.Content = videoFolder;
-
+            Helper.CloneDirectory(videoPathInSolution, videoServerURL);
         }
 
         private void btnSelectVideoFolder_Click(object sender, RoutedEventArgs e)
@@ -66,7 +59,7 @@ namespace VideoStreamingServer
             if (result == System.Windows.Forms.DialogResult.OK)
             {
                 lblVideoFolder.Content = fbd.SelectedPath;
-                server.VideoFolder = fbd.SelectedPath;
+                server.ServerURL = fbd.SelectedPath;
             }
         }
 
@@ -78,61 +71,7 @@ namespace VideoStreamingServer
 
             server.IPAddress = IPAddress.Parse(cmbIp.SelectedItem.ToString());
             server.Port = int.Parse(txtPort.Text);
-            //ipAddress = IPAddress.Parse(cmbIp.SelectedItem.ToString());
-            //port = int.Parse(txtPort.Text);
-            server.ExecuteServer();
-        }
-
-        private async void ExecuteServer()
-        {
-            numberOfConnectionsLeft = numberOfClients;
-            IPEndPoint serverEndPoint = new IPEndPoint(ipAddress, port);
-            listener = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            try
-            {
-                listener.Bind(serverEndPoint);
-                listener.Listen(backlog: numberOfClients);
-                tbkInfo.Text = tbkInfo.Text.Insert(0, new string('-', 50) + "\n");
-                tbkInfo.Text = tbkInfo.Text.Insert(0, $"Socket server started at : {DateTime.Now:dd/MM/yyyy HH:mm:ss}\n");
-                tbkInfo.Text = tbkInfo.Text.Insert(0, $"Listening to IP : {ipAddress}\n");
-                tbkInfo.Text = tbkInfo.Text.Insert(0, $"Listening on port : {port}\n");
-                tbkInfo.Text = tbkInfo.Text.Insert(0, $"Endpoint : {serverEndPoint}\n");
-                tbkInfo.Text = tbkInfo.Text.Insert(0, $"Maximum number of connections : {numberOfClients}\n");
-
-                while (listening)
-                {
-                    tbkInfo.Refresh();
-
-
-                    tbkInfo.Text = tbkInfo.Text.Insert(0, $"Waiting for client to accept\n");
-                    Socket client = await listener.AcceptAsync(); // Blocks the thread until client connects
-                    if (!client.Connected)
-                    {
-                        tbkInfo.Text = tbkInfo.Text.Insert(0, $"Client failed to connect\n");
-                        continue;
-                    }
-                    tbkInfo.Text = tbkInfo.Text.Insert(0, $"Client connected through address : {((IPEndPoint)client.RemoteEndPoint).Address} and port {((IPEndPoint)client.RemoteEndPoint).Port}\n");
-                    tbkInfo.Text = tbkInfo.Text.Insert(0, $"Number of possible connections left: {--numberOfConnectionsLeft}\n");
-
-                    var buffer = Encoding.UTF8.GetBytes(videoFolder);
-
-                    //StartSending();
-                    
-
-                    client.Send(buffer);
-
-                }
-
-                listener.Dispose();
-
-            }
-            catch (System.Exception ex)
-            {
-                if (listening)
-                {
-                    tbkInfo.Text = $"Error : {ex.Message} \n" + tbkInfo.Text;
-                }
-            }
+            server.Start();
         }
 
         private void btnStopServer_Click(object sender, RoutedEventArgs e)
@@ -140,21 +79,7 @@ namespace VideoStreamingServer
             btnStartServer.IsEnabled = true;
             btnStopServer.IsEnabled = false;
             grpConfig.IsEnabled = true;
-            listening = false;
-            try
-            {
-                listener.Close();
-            }
-            catch
-            { }
-            listener = null;
-
-            tbkInfo.Text = $"Socket server stopped at : {DateTime.Now:dd/MM/yyyy HH:mm:ss} \n" + tbkInfo.Text;
-        }
-
-        private void cmbIp_SourceUpdated(object sender, DataTransferEventArgs e)
-        {
-
+            server.Stop();
         }
     }
 }
