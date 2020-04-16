@@ -16,11 +16,11 @@
             <Grid Margin="10,0,13,-0.4">
 
                 <Label Content="Communication over Ip:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="176"/>
-                <ComboBox x:Name="cmbIp" HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top" Width="176" Height="23"/>
+                <ComboBox x:Name="cmbIp" ItemsSource="{Binding ActiveIP4s}" SelectedIndex="0" HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top" Width="176" Height="23"/>
                 <Label Content="Port:" HorizontalAlignment="Left" Margin="213,10,0,0" VerticalAlignment="Top" Width="143"/>
-                <TextBox x:Name="txtPort" HorizontalAlignment="Left" Height="23" Margin="213,45,0,0" TextWrapping="Wrap" Text="80" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="47" TextAlignment="Center"/>
+                <TextBox x:Name="txtPort" Text="{Binding Port}" HorizontalAlignment="Left" Height="23" Margin="213,45,0,0" TextWrapping="Wrap" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="47" TextAlignment="Center"/>
                 <Label Content="Video folder:" HorizontalAlignment="Left" Margin="297,10,0,0" VerticalAlignment="Top" Width="202"/>
-                <Label x:Name="lblVideoFolder" HorizontalAlignment="Left" Margin="290,41,0,0" VerticalAlignment="Top" Width="202" BorderBrush="Silver" BorderThickness="2" Height="27" />
+                <Label x:Name="lblVideoFolder" Content="{Binding VideoFolder}"  HorizontalAlignment="Left" Margin="290,41,0,0" VerticalAlignment="Top" Width="202" BorderBrush="Silver" BorderThickness="2" Height="27" />
                 <Button x:Name="btnSelectVideoFolder" Content="..." HorizontalAlignment="Left" Margin="497,41,0,0" VerticalAlignment="Top" Width="36" Click="btnSelectVideoFolder_Click" Height="27"/>
 
 
@@ -36,7 +36,13 @@
         </GroupBox>
         <GroupBox x:Name="grpServerInfo" Header="Connection Info" Margin="10,119,9.6,10">
             <ScrollViewer Margin="0,10,-0.6,-0.6" Grid.ColumnSpan="2">
-                <TextBlock x:Name="tbkInfo" HorizontalAlignment="Left"  Margin="0,0,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Padding="10" Width="746" Height="261" />
+                <ListBox x:Name="lsbInfo" ItemsSource="{Binding ServerInfoList}"  HorizontalAlignment="Left"  Margin="0,0,0,0" VerticalAlignment="Top" Padding="10" Width="746" Height="261" >
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding ServerInfo}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </ScrollViewer>
         </GroupBox>
 
