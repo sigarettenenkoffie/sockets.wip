@@ -35,15 +35,13 @@
             </Grid>
         </GroupBox>
         <GroupBox x:Name="grpServerInfo" Header="Connection Info" Margin="10,119,9.6,10">
-            <ScrollViewer Margin="0,10,-0.6,-0.6" Grid.ColumnSpan="2">
-                <ListBox x:Name="lsbInfo" ItemsSource="{Binding ServerInfoList}"  HorizontalAlignment="Left"  Margin="0,0,0,0" VerticalAlignment="Top" Padding="10" Width="746" Height="261" >
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding ServerInfo}"/>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </ScrollViewer>
+            <ListBox BorderThickness="0" x:Name="lsbInfo" ItemsSource="{Binding ServerInfoList}"  HorizontalAlignment="Left"  Margin="0,0,0,0" VerticalAlignment="Top" Padding="10" Width="746" Height="261" >
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding ServerInfo}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </GroupBox>
 
     </Grid>
