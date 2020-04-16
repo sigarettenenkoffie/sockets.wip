@@ -11,7 +11,7 @@ namespace SocketLib
         public List<string> ActiveIP4s { get; set; } = Helper.GetActiveIP4s();
         public string VideoFolder { get; set; }
         public IPAddress IPAddress { get; set; }
-        public int Port { get; set; } = 20;
+        public int Port { get; set; } = 80;
         public Socket Listener { get; set; }
         private const int MaxConnections = 20;
         private int NumberOfConnectionsLeft { get; set; }

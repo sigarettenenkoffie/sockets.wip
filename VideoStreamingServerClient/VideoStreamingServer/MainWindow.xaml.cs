@@ -53,7 +53,7 @@ namespace VideoStreamingServer
             Helper.CloneDirectory(videoPathInSolution, videoFolder);
 
             //cmbIp.ItemsSource = Helper.GetActiveIP4s();
-            cmbIp.SelectedIndex = 0;
+            //cmbIp.SelectedIndex = 0;
             //lblVideoFolder.Content = videoFolder;
 
         }

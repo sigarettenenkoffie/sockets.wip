@@ -16,7 +16,7 @@
             <Grid Margin="10,0,13,-0.4">
 
                 <Label Content="Communication over Ip:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="176"/>
-                <ComboBox x:Name="cmbIp" ItemsSource="{Binding ActiveIP4s}"  HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top" Width="176" Height="23"/>
+                <ComboBox x:Name="cmbIp" ItemsSource="{Binding ActiveIP4s}" SelectedIndex="0" HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top" Width="176" Height="23"/>
                 <Label Content="Port:" HorizontalAlignment="Left" Margin="213,10,0,0" VerticalAlignment="Top" Width="143"/>
                 <TextBox x:Name="txtPort" Text="{Binding Port}" HorizontalAlignment="Left" Height="23" Margin="213,45,0,0" TextWrapping="Wrap" VerticalAlignment="Top" VerticalContentAlignment="Center" Width="47" TextAlignment="Center"/>
                 <Label Content="Video folder:" HorizontalAlignment="Left" Margin="297,10,0,0" VerticalAlignment="Top" Width="202"/>
