@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SocketLib
 {
@@ -43,6 +44,7 @@ namespace SocketLib
 
         public async void Start()
         {
+            // TODO: start server through task
             IPEndPoint serverEndPoint = new IPEndPoint(IPAddress, Port);
             Listener = new Socket(IPAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             try
@@ -57,6 +59,7 @@ namespace SocketLib
                 ServerInfoList.Add($"Maximum number of connections : {MaxConnections}\n");
                 while (Listening)
                 {
+                    ServerInfoList.Add(new string('-', 50) + "\n");
                     ServerInfoList.Add($"Waiting for client to accept\n");
                     Client = await Listener.AcceptAsync();
 
@@ -65,9 +68,12 @@ namespace SocketLib
                         ServerInfoList.Add($"Client failed to connect\n");
                         continue;
                     }
+                    ServerInfoList.Add(new string('-', 50) + "\n");
                     ServerInfoList.Add($"Client connected {((IPEndPoint)Client.RemoteEndPoint).Address} : {((IPEndPoint)Client.RemoteEndPoint).Port}\n");
                     ServerInfoList.Add($"Number of possible connections left: {MaxConnections - ++ClientsConnected}\n");
 
+                    // TODO: communicate (receive/send) with client through async task
+                    Task t = CommunicateWithClientAsync(Client);
                     var buffer = Encoding.UTF8.GetBytes(ServerURL);
                     Client.Send(buffer);
                 }
@@ -77,9 +83,17 @@ namespace SocketLib
             catch (System.Exception ex)
             {
                 if (Listening)
+                {
+                    ServerInfoList.Add(new string('-', 50) + "\n");
                     ServerInfoList.Add($"Error : {ex.Message} \n");
+                }
             }
             
+        }
+
+        private static Task CommunicateWithClientAsync(Socket client)
+        {
+            throw new NotImplementedException();
         }
 
         public void Stop()
@@ -94,6 +108,7 @@ namespace SocketLib
             	
             }
             Listener = null;
+            ServerInfoList.Add(new string('-', 50) + "\n");
             ServerInfoList.Add($"Socket server stopped at : {DateTime.Now:dd/MM/yyyy HH:mm:ss} \n");
         }
 
