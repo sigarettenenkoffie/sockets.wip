@@ -35,7 +35,7 @@ namespace VideoStreamingServer
         public Socket listener;
         private int numberOfClients = 20;
         private int numberOfConnectionsLeft;
-        private bool keepOnGoing = true;
+        private bool listening = true;
 
         public MainWindow()
         {
@@ -76,7 +76,7 @@ namespace VideoStreamingServer
             ExecuteServer();
         }
 
-        private void ExecuteServer()
+        private async void ExecuteServer()
         {
             numberOfConnectionsLeft = numberOfClients;
             IPEndPoint serverEndPoint = new IPEndPoint(ipAddress, port);
@@ -92,39 +92,40 @@ namespace VideoStreamingServer
                 tbkInfo.Text = tbkInfo.Text.Insert(0, $"Endpoint : {serverEndPoint}\n");
                 tbkInfo.Text = tbkInfo.Text.Insert(0, $"Maximum number of connections : {numberOfClients}\n");
 
-                while (keepOnGoing)
+                while (listening)
                 {
                     tbkInfo.Refresh();
-                    if (listener.Poll(1000000, SelectMode.SelectRead)) // lost hang op
+
+
+                    tbkInfo.Text = tbkInfo.Text.Insert(0, $"Waiting for client to accept\n");
+                    Socket client = await listener.AcceptAsync(); // Blocks the thread until client connects
+                    if (!client.Connected)
                     {
-                        tbkInfo.Text = tbkInfo.Text.Insert(0, $"Waiting for client to accept\n");
-                        Socket client = listener.Accept(); // Blocks the thread until client connects
-                        if (!client.Connected)
-                        {
-                            tbkInfo.Text = $"Client failed to connect\n" + tbkInfo.Text;
-                            continue;
-                        }
-                        tbkInfo.Text = tbkInfo.Text.Insert(0, $"Client connected through address : {((IPEndPoint)client.RemoteEndPoint).Address} and port {((IPEndPoint)client.RemoteEndPoint).Port}\n");
-                        tbkInfo.Text = tbkInfo.Text.Insert(0, $"Number of possible connections left: {--numberOfConnectionsLeft}\n");
-                        
-                        var buffer = Encoding.UTF8.GetBytes(videoFolder);
-                        client.Send(buffer);
+                        tbkInfo.Text = tbkInfo.Text.Insert(0, $"Client failed to connect\n");
+                        continue;
                     }
+                    tbkInfo.Text = tbkInfo.Text.Insert(0, $"Client connected through address : {((IPEndPoint)client.RemoteEndPoint).Address} and port {((IPEndPoint)client.RemoteEndPoint).Port}\n");
+                    tbkInfo.Text = tbkInfo.Text.Insert(0, $"Number of possible connections left: {--numberOfConnectionsLeft}\n");
+
+                    var buffer = Encoding.UTF8.GetBytes(videoFolder);
+
+                    //StartSending();
+                    
+
+                    client.Send(buffer);
+
                 }
 
                 listener.Dispose();
 
-
-
             }
             catch (System.Exception ex)
             {
-                if (keepOnGoing)
+                if (listening)
                 {
                     tbkInfo.Text = $"Error : {ex.Message} \n" + tbkInfo.Text;
                 }
             }
-
         }
 
         private void btnStopServer_Click(object sender, RoutedEventArgs e)
@@ -132,7 +133,7 @@ namespace VideoStreamingServer
             btnStartServer.IsEnabled = true;
             btnStopServer.IsEnabled = false;
             grpConfig.IsEnabled = true;
-            keepOnGoing = false;
+            listening = false;
             try
             {
                 listener.Close();
