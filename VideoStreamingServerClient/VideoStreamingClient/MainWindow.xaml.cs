@@ -112,6 +112,7 @@ namespace VideoStreamingClient
         private void btnPlay_Click(object sender, RoutedEventArgs e)
         {
             mdaVideoPlayer.Source = new System.Uri(cmbVideoFiles.SelectedItem.ToString());
+            clientSocket.Send(Encoding.UTF8.GetBytes(cmbVideoFiles.SelectedItem.ToString()));
             mdaVideoPlayer.Play();
         }
 
