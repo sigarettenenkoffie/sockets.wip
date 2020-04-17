@@ -35,7 +35,7 @@
             </Grid>
         </GroupBox>
         <GroupBox x:Name="grpServerInfo" Header="Connection Info" Margin="10,119,9.6,10">
-            <ListBox Background="Black" UseLayoutRounding="True"  BorderThickness="0" x:Name="lsbInfo" ItemsSource="{Binding ServerInfoList}"  HorizontalAlignment="Left"  Margin="0,0,0,0" VerticalAlignment="Top" Padding="10" Width="746" Height="261" >
+            <ListBox Background="Black" UseLayoutRounding="True"  BorderThickness="0" x:Name="lsbInfo" ItemsSource="{Binding ServerLog}"  HorizontalAlignment="Left"  Margin="0,0,0,0" VerticalAlignment="Top" Padding="10" Width="746" Height="261" >
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding ServerInfo}" Height="15" Foreground="SpringGreen"/>

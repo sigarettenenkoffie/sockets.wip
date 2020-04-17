@@ -127,7 +127,10 @@ namespace VideoStreamingClient
 
         private void btnDisconnect_Click(object sender, RoutedEventArgs e)
         {
-            clientSocket.Disconnect(true);
+            //string line = "shutdown";
+            //byte[] buffer = Encoding.UTF8.GetBytes($"shutdown");
+            clientSocket.Send(Encoding.UTF8.GetBytes($"shutdown"));
+            //clientSocket.Disconnect(true);
             string disconnected = "Disconnected from the server";
             lstClientBox.Items.Add(disconnected);
             btnConnect.IsEnabled = true;
