@@ -121,7 +121,7 @@ namespace SocketLib
                             ServerLog.AddLogLine($"Sent to client: {writeBuffer}");
                         } while (!completed);
                     }
-
+                    //client.Disconnect(reuseSocket: true);
                     ServerLog.AddLogLine("Closed stream and client socket");
                 }
                 catch (Exception ex)
@@ -157,18 +157,18 @@ namespace SocketLib
 
 public class ServerLog : ObservableCollection<Server>
 {
-        private SynchronizationContext UContext { get; set; } = SynchronizationContext.Current;
+        private SynchronizationContext UIContext { get; } = SynchronizationContext.Current;
         public void AddLogLine(string serverInfo = null)
     {
             if (serverInfo == null)
             {
-                this.Insert(0, new Server { ServerInfo = serverInfo });
+                Insert(0, new Server { ServerInfo = serverInfo });
 
             }
             else
             {
-                UContext.Send(x =>
-                  this.Insert(0, new Server { ServerInfo = $"{DateTime.Now:HH:mm:ss.fff} > " + serverInfo }), null);
+                UIContext.Send(x =>
+                  Insert(0, new Server { ServerInfo = $"{DateTime.Now:HH:mm:ss.fff} > " + serverInfo }), null);
 
             }
     }
