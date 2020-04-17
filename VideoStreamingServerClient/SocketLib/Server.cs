@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -20,7 +21,8 @@ namespace SocketLib
         private const int MaxConnections = 20;
         private int ClientsConnected { get; set; } = 0;
         public bool Listening { get; set; } = true;
-        public ServerInfoList ServerInfoList {get; } = new ServerInfoList();
+        public ServerLog ServerLog {get; } = new ServerLog();
+
         private string _ServerInfo = "";
         public string ServerInfo
         {
@@ -32,18 +34,17 @@ namespace SocketLib
             }
         }
 
-        public event PropertyChangedEventHandler ServerInfoChanged;
         private Socket Client { get; set; }
 
-
+        public event PropertyChangedEventHandler ServerInfoChanged;
 
         public Server()
-        {
-            ServerInfo.Insert(0, new string('-', 50) + "\n");
+        {         
         }
 
         public async void Start()
         {
+            Listening = true;
             // TODO: start server through task
             IPEndPoint serverEndPoint = new IPEndPoint(IPAddress, Port);
             Listener = new Socket(IPAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -51,26 +52,26 @@ namespace SocketLib
             {
                 Listener.Bind(serverEndPoint);
                 Listener.Listen(backlog: MaxConnections);
-                ServerInfoList.Add(new string('-', 50) + "\n");
-                ServerInfoList.Add($"Socket server started at : {DateTime.Now:dd/MM/yyyy HH:mm:ss}\n");
-                ServerInfoList.Add($"Listening to IP : {IPAddress}\n");
-                ServerInfoList.Add($"Listening on port : {Port}\n");
-                ServerInfoList.Add($"Endpoint : {serverEndPoint}\n");
-                ServerInfoList.Add($"Maximum number of connections : {MaxConnections}\n");
+                ServerLog.Add(null);
+                ServerLog.Add($"Socket server started at : {DateTime.Now:dd/MM/yyyy HH:mm:ss.fff}");
+                ServerLog.Add($"Listening to IP : {IPAddress}");
+                ServerLog.Add($"Listening on port : {Port}");
+                ServerLog.Add($"Endpoint : {serverEndPoint}");
+                ServerLog.Add($"Maximum number of connections : {MaxConnections}");
                 while (Listening)
                 {
-                    ServerInfoList.Add(new string('-', 50) + "\n");
-                    ServerInfoList.Add($"Waiting for client to accept\n");
+                    ServerLog.Add(null);
+                    ServerLog.Add($"Waiting for client to accept");
                     Client = await Listener.AcceptAsync();
 
                     if (!Client.Connected)
                     {
-                        ServerInfoList.Add($"Client failed to connect\n");
+                        ServerLog.Add($"Client failed to connect");
                         continue;
                     }
-                    ServerInfoList.Add(new string('-', 50) + "\n");
-                    ServerInfoList.Add($"Client connected {((IPEndPoint)Client.RemoteEndPoint).Address} : {((IPEndPoint)Client.RemoteEndPoint).Port}\n");
-                    ServerInfoList.Add($"Number of possible connections left: {MaxConnections - ++ClientsConnected}\n");
+                    ServerLog.Add(null);
+                    ServerLog.Add($"Client connected {((IPEndPoint)Client.RemoteEndPoint).Address} : {((IPEndPoint)Client.RemoteEndPoint).Port}");
+                    ServerLog.Add($"Number of possible connections left: {MaxConnections - ++ClientsConnected}");
 
                     // TODO: communicate (receive/send) with client through async task
                     Task t = CommunicateWithClientAsync(Client);
@@ -84,16 +85,17 @@ namespace SocketLib
             {
                 if (Listening)
                 {
-                    ServerInfoList.Add(new string('-', 50) + "\n");
-                    ServerInfoList.Add($"Error : {ex.Message} \n");
+                    ServerLog.Add(null);
+                    ServerLog.Add($"Error : {ex.Message}");
                 }
             }
             
         }
 
-        private static Task CommunicateWithClientAsync(Socket client)
+        private async Task CommunicateWithClientAsync(Socket client)
         {
-            throw new NotImplementedException();
+
+
         }
 
         public void Stop()
@@ -108,17 +110,20 @@ namespace SocketLib
             	
             }
             Listener = null;
-            ServerInfoList.Add(new string('-', 50) + "\n");
-            ServerInfoList.Add($"Socket server stopped at : {DateTime.Now:dd/MM/yyyy HH:mm:ss} \n");
+            ServerLog.Add(null);
+            ServerLog.Add($"Socket server stopped at : {DateTime.Now:dd/MM/yyyy HH:mm:ss}");
         }
 
     }
 
-    public class ServerInfoList : ObservableCollection<Server>
+    public class ServerLog : ObservableCollection<Server>
     {
         public void Add(string serverInfo)
         {
-            this.Insert(0, new Server { ServerInfo = serverInfo });
+            if (serverInfo == null)
+                this.Insert(0, new Server { ServerInfo = serverInfo });
+            else
+                this.Insert(0,  new Server { ServerInfo = $"{DateTime.Now:HH:mm:ss.fff} > " + serverInfo });
         }
     }
 }
