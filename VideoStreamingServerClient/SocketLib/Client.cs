@@ -74,6 +74,11 @@ namespace SocketLib
             return response;
         }
 
+        public void SendPlay(string selectedItem)
+        {
+            ClientSocket.Send(Encoding.UTF8.GetBytes(selectedItem));
+        }
+
         public string Disconnect()
         {
             string disconnected;
