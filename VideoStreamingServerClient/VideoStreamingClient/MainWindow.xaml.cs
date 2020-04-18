@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows;
+using SocketLib;
 
 namespace VideoStreamingClient
 {
@@ -12,11 +13,7 @@ namespace VideoStreamingClient
     /// </summary>
     public partial class MainWindow : Window
     {
-        int serverPort = 0;
-        IPAddress serverIP;
-        Socket clientSocket;
-        string directory = "";
-
+        Client client = new Client();
 
         public MainWindow()
         {
@@ -27,29 +24,14 @@ namespace VideoStreamingClient
         private void StartUp()
         {
             btnDisconnect.IsEnabled = false;
-        }
-
-        private void ReadConfiguration()
-        {
-
-            int.TryParse(txtPort.Text, out serverPort);
-
-            string ip = txtServerIP.Text.Trim();
-
-            try
-            {
-                serverIP = IPAddress.Parse(ip);
-            }
-            catch
-            {
-                ip = "127.0.0.1";
-                txtServerIP.Text = ip;
-            }
+            btnPlay.IsEnabled = false;
+            btnPause.IsEnabled = false;
+            btnStop.IsEnabled = false;
         }
 
         private void GetVideoFiles()
         {
-            string[] videoFiles = Directory.GetFiles(directory);
+            string[] videoFiles = client.GetFiles();
 
             foreach (var video in videoFiles)
             {
@@ -57,51 +39,30 @@ namespace VideoStreamingClient
             }
         }
 
-        private void SendToServer()
+        private void btnConnect_Click(object sender, RoutedEventArgs e)
         {
+            int port = int.Parse(txtPort.Text);
+            string ip = txtServerIP.Text.Trim();
+            IPAddress serverIP;
             string connection;
 
-            ReadConfiguration();
-
-            IPEndPoint server = new IPEndPoint(serverIP, serverPort);
-            IPHostEntry clientHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress clientIP = clientHostInfo.AddressList[0];
-
-            foreach (var ip in clientHostInfo.AddressList)
+            if (client.CheckIP(ip) == true)
             {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    clientIP = ip;
-                    break;
-                }
-            }
-
-            clientSocket = new Socket(clientIP.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-
-            try
-            {
-                clientSocket.Connect(server);
-
-                byte[] serverResponse = new byte[8019];
-                int messageLength = clientSocket.Receive(serverResponse);
-                directory = Encoding.ASCII.GetString(serverResponse, 0, messageLength).ToUpper().Trim();
+                serverIP = IPAddress.Parse(ip);
+                connection = client.Send(serverIP, port);
                 GetVideoFiles();
 
-                connection = "Succesful connected to server";
-                lstClientBox.Items.Add(connection);
                 btnDisconnect.IsEnabled = true;
                 btnConnect.IsEnabled = false;
             }
-            catch
+            else
             {
-                connection = "No response from the server";
-                lstClientBox.Items.Add(connection);
+                ip = "127.0.0.1";
+                txtServerIP.Text = ip;
+                connection = $"IP address was incorrect\nIp address has been set to: {ip}\nPlease reconnect or give another ip address";
             }
-        }
-
-        private void btnConnect_Click(object sender, RoutedEventArgs e)
-        {
-            SendToServer();
+             
+            lstClientBox.Items.Add(connection);         
         }
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
@@ -113,25 +74,30 @@ namespace VideoStreamingClient
         {
             mdaVideoPlayer.Source = new System.Uri(cmbVideoFiles.SelectedItem.ToString());
             mdaVideoPlayer.Play();
+            btnPlay.IsEnabled = false;
+            btnPause.IsEnabled = true;
+            btnStop.IsEnabled = true;
         }
 
         private void btnPause_Click(object sender, RoutedEventArgs e)
         {
             mdaVideoPlayer.Pause();
+            btnPause.IsEnabled = false;
+            btnPlay.IsEnabled = true;
         }
 
         private void btnStop_Click(object sender, RoutedEventArgs e)
         {
             mdaVideoPlayer.Stop();
+            btnStop.IsEnabled = false;
+            btnPlay.IsEnabled = true;
         }
 
         private void btnDisconnect_Click(object sender, RoutedEventArgs e)
         {
-            //string line = "shutdown";
-            //byte[] buffer = Encoding.UTF8.GetBytes($"shutdown");
-            clientSocket.Send(Encoding.UTF8.GetBytes($"shutdown"));
-            clientSocket.Disconnect(true);
-            string disconnected = "Disconnected from the server";
+            string disconnected;
+
+            disconnected = client.Disconnect();
             lstClientBox.Items.Add(disconnected);
             btnConnect.IsEnabled = true;
         }

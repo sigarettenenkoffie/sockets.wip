@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 
 namespace SocketLib
 {
-
     public class Server
     {
         public List<string> ActiveIP4s { get; } = Helper.GetActiveIP4s();
@@ -93,7 +92,6 @@ namespace SocketLib
                     ServerLog.AddLogLine($"Error : {ex.Message}");
                 }
             }
-
         }
 
         private void CommunicateWithClient(Socket client)
@@ -129,48 +127,39 @@ namespace SocketLib
                     ServerLog.AddLogLine(ex.Message);
                 }
             });
-
-
-
         }
-
-
-
 
         public void Stop()
-    {
-        Listening = false;
-        try
         {
-            Listener.Close();
-        }
-        catch
-        {
+            Listening = false;
+            try
+            {
+                Listener.Close();
+            }
+            catch
+            {
 
+            }
+            Listener = null;
+            ServerLog.AddLogLine();
+            ServerLog.AddLogLine($"Socket server halted");
         }
-        Listener = null;
-        ServerLog.AddLogLine();
-        ServerLog.AddLogLine($"Socket server halted");
     }
 
-}
-
-public class ServerLog : ObservableCollection<Server>
-{
+    public class ServerLog : ObservableCollection<Server>
+    {
         private SynchronizationContext UIContext { get; } = SynchronizationContext.Current;
         public void AddLogLine(string serverInfo = null)
-    {
+        {
             if (serverInfo == null)
             {
                 Insert(0, new Server { ServerInfo = serverInfo });
-
             }
             else
             {
                 UIContext.Send(x =>
                   Insert(0, new Server { ServerInfo = $"{DateTime.Now:HH:mm:ss.fff} > " + serverInfo }), null);
-
             }
+        }
     }
-}
 }
