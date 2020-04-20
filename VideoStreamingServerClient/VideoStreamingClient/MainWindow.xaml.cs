@@ -67,12 +67,13 @@ namespace VideoStreamingClient
             btnPlay.IsEnabled = true;
             btnConnect.IsEnabled = false;
             btnDisconnect.IsEnabled = true;
+            btnExit.IsEnabled = false;
 
         }
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
-            Application.Current.Shutdown();
+            Close();
         }
 
         private void btnPlay_Click(object sender, RoutedEventArgs e)
@@ -114,6 +115,7 @@ namespace VideoStreamingClient
             btnPlay.IsEnabled = false;
             btnPause.IsEnabled = false;
             btnStop.IsEnabled = false;
+            btnExit.IsEnabled = true;
         }
     }
 }
