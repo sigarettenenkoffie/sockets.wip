@@ -62,7 +62,12 @@ namespace VideoStreamingClient
                 connection = $"IP address was incorrect\nIp address has been set to: {ip}\nPlease reconnect or give another ip address";
             }
              
-            lstClientBox.Items.Add(connection);         
+            lstClientBox.Items.Add(connection);
+            cmbVideoFiles.SelectedIndex = 0;
+            btnPlay.IsEnabled = true;
+            btnConnect.IsEnabled = false;
+            btnDisconnect.IsEnabled = true;
+
         }
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
@@ -103,6 +108,12 @@ namespace VideoStreamingClient
             disconnected = client.Disconnect();
             lstClientBox.Items.Add(disconnected);
             btnConnect.IsEnabled = true;
+            btnDisconnect.IsEnabled = false;
+            cmbVideoFiles.Items.Clear();
+            mdaVideoPlayer.Close();
+            btnPlay.IsEnabled = false;
+            btnPause.IsEnabled = false;
+            btnStop.IsEnabled = false;
         }
     }
 }
