@@ -56,27 +56,50 @@ namespace SocketLib
 
         public string[] GetFiles()
         {
-            string files = GetResponse();
+            string[] files = Helper.FromByteArray(GetResponse());
 
-            string[] arrFiles = Directory.GetFiles(files);
-            return arrFiles;
+            //string[] arrFiles = Directory.GetFiles(files);
+            return files;
         }
 
-        private string GetResponse()
+        private byte[] GetResponse()
         {
-            string response;
+            //string[] response;
             byte[] serverResponse = new byte[8019];
             int messageLength;
 
-            messageLength = ClientSocket.Receive(serverResponse);
-            response = Encoding.ASCII.GetString(serverResponse, 0, messageLength).ToUpper().Trim();
 
-            return response;
+            messageLength = ClientSocket.Receive(serverResponse);
+            //response = Encoding.ASCII.GetString(serverResponse, 0, messageLength).ToUpper().Trim();
+            //response = Helper.FromByteArray(serverResponse);
+
+            return serverResponse;
         }
 
-        public void SendPlay(string selectedItem)
+        public string SendPlay(string selectedItem)
         {
             ClientSocket.Send(Encoding.UTF8.GetBytes(selectedItem));
+
+
+            int arrsize = 1000;
+            byte[] buffer = new byte[arrsize];
+            int readBytes = -1;
+            SocketError errorCode;
+            string outPath = Path.Combine(Path.GetTempPath(), selectedItem);
+            if (File.Exists(outPath))
+                File.Delete(outPath);
+            Stream strm = new FileStream(outPath, FileMode.CreateNew);
+
+            while (readBytes != 0)
+            {
+                readBytes = ClientSocket.Receive(buffer, 0, arrsize, SocketFlags.None, out errorCode);
+                if (buffer.Length == 0)
+                    break;
+                strm.Write(buffer, 0, readBytes);
+            }
+            strm.Close();
+            return outPath;
+            
         }
 
         public string Disconnect()
@@ -126,4 +149,5 @@ namespace SocketLib
             }
         }
     }
+
 }
