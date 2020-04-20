@@ -64,14 +64,13 @@ namespace SocketLib
 
         private byte[] GetResponse()
         {
-            //string[] response;
             byte[] serverResponse = new byte[8019];
-            int messageLength;
+            //int messageLength;
+            ClientSocket.Receive(serverResponse);
 
-
-            messageLength = ClientSocket.Receive(serverResponse);
+            //messageLength = ClientSocket.Receive(serverResponse);
             //response = Encoding.ASCII.GetString(serverResponse, 0, messageLength).ToUpper().Trim();
-            //response = Helper.FromByteArray(serverResponse);
+            var response = Helper.FromByteArray(serverResponse);
 
             return serverResponse;
         }
@@ -79,8 +78,6 @@ namespace SocketLib
         public string SendPlay(string selectedItem)
         {
             ClientSocket.Send(Encoding.UTF8.GetBytes(selectedItem));
-
-
             int arrsize = 1000;
             byte[] buffer = new byte[arrsize];
             int readBytes = -1;
@@ -93,8 +90,6 @@ namespace SocketLib
             while (readBytes != 0)
             {
                 readBytes = ClientSocket.Receive(buffer, 0, arrsize, SocketFlags.None, out errorCode);
-                if (buffer.Length == 0)
-                    break;
                 strm.Write(buffer, 0, readBytes);
             }
             strm.Close();
