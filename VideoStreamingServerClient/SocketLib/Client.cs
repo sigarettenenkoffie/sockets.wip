@@ -42,7 +42,7 @@ namespace SocketLib
 
             try
             {
-                ClientSocket.Connect(server);                
+                ClientSocket.BeginConnect(server, null, null);                
                 GetFiles();
 
                 connection = "Succesful connected to server";               
