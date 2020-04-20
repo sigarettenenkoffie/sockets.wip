@@ -79,8 +79,8 @@ namespace VideoStreamingClient
         private void btnPlay_Click(object sender, RoutedEventArgs e)
         {
             string selectedItem = cmbVideoFiles.SelectedItem.ToString();
-            mdaVideoPlayer.Source = new System.Uri(selectedItem);
-            client.SendPlay(selectedItem);
+            mdaVideoPlayer.Source = new System.Uri(client.SendPlay(selectedItem));
+            //client.SendPlay(selectedItem);
 
             mdaVideoPlayer.Play();
             btnPlay.IsEnabled = false;

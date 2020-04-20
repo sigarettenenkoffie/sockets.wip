@@ -48,7 +48,7 @@ namespace SocketLib
         public async void Start()
         {
             Listening = true;
-            // TODO: start server through task
+
             IPEndPoint serverEndPoint = new IPEndPoint(IPAddress, Port);
             Listener = new Socket(IPAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             try
@@ -58,8 +58,6 @@ namespace SocketLib
                 ServerLog.AddLogLine();
                 ServerLog.AddLogLine($"Socket server started");
                 ServerLog.AddLogLine($"Listening on IP {IPAddress} and port {Port}");
-                //ServerLog.Add($"Listening on port : {Port}");
-                //ServerLog.Add($"Endpoint : {serverEndPoint}");
                 ServerLog.AddLogLine($"Maximum number of connections : {MaxConnections}");
                 while (Listening)
                 {
@@ -76,8 +74,9 @@ namespace SocketLib
                     ServerLog.AddLogLine($"Client connected {((IPEndPoint)Client.RemoteEndPoint).Address} : {((IPEndPoint)Client.RemoteEndPoint).Port}");
                     ServerLog.AddLogLine($"Number of possible connections left: {MaxConnections - ++ClientsConnected}");
 
-                    // TODO: communicate (receive/send) with client through async task
-                    var buffer = Encoding.UTF8.GetBytes(ServerURL);
+                    string[] videos = Helper.GetFileList(ServerURL);
+                    var buffer = Helper.ToByteArray(videos);
+
                     Client.Send(buffer);
                     CommunicateWithClient(Client);
                 }
@@ -114,13 +113,18 @@ namespace SocketLib
                                 completed = true;
                                 ClientsConnected--;
                             }
-                            byte[] writeBuffer = Encoding.UTF8.GetBytes("message received");
-                            client.Send(writeBuffer);
-                            ServerLog.AddLogLine($"Sent to client: {writeBuffer}");
+                            string fullPath = Path.Combine(ServerURL, fromClient);
+                            
+                            client.SendFile(fullPath);
+
+                            ServerLog.AddLogLine($"Sending file to client: {fromClient}");
+                            completed = true;
                         } while (!completed);
                     }
+                    // TODO: Why is client disconnected after receiving the stream?
+
                     //client.Disconnect(reuseSocket: true);
-                    ServerLog.AddLogLine("Closed stream and client socket");
+                    //ServerLog.AddLogLine("Closed stream and client socket");
                 }
                 catch (Exception ex)
                 {
@@ -128,6 +132,7 @@ namespace SocketLib
                 }
             });
         }
+
 
         public void Stop()
         {
