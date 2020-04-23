@@ -39,6 +39,7 @@ namespace SocketLib
             }
 
             ClientSocket = new Socket(clientIP.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            //ClientSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive,  true);
 
             try
             {
@@ -86,7 +87,8 @@ namespace SocketLib
             if (File.Exists(outPath))
                 File.Delete(outPath);
             Stream strm = new FileStream(outPath, FileMode.CreateNew);
-
+            if (!ClientSocket.Connected)
+                Send(ServerIP, ServerPort);
             while (readBytes != 0)
             {
                 readBytes = ClientSocket.Receive(buffer, 0, arrsize, SocketFlags.None, out errorCode);
@@ -99,11 +101,14 @@ namespace SocketLib
 
         public string Disconnect()
         {
-            string disconnected;
+            string disconnected = "";
 
+            if (ClientSocket.Connected)
+            {
             ClientSocket.Send(Encoding.UTF8.GetBytes($"shutdown"));
-            ClientSocket.Disconnect(true);
-            disconnected = "Disconnected from the server";
+                ClientSocket.Disconnect(true);
+                disconnected = "Disconnected from the server";
+            }
 
             return disconnected;
         }

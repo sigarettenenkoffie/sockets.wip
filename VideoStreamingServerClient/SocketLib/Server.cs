@@ -22,6 +22,7 @@ namespace SocketLib
         private const int MaxConnections = 20;
         private int ClientsConnected { get; set; } = 0;
         public bool Listening { get; set; } = true;
+        public bool SocketClosed = true;
         public static ServerLog ServerLog { get; } = new ServerLog();
 
         private string _ServerInfo = "";
@@ -47,89 +48,101 @@ namespace SocketLib
 
         public async void Start()
         {
+            do // This loop makes reconnecting client possible
+            {
             Listening = true;
 
             IPEndPoint serverEndPoint = new IPEndPoint(IPAddress, Port);
             Listener = new Socket(IPAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            try
-            {
-                Listener.Bind(serverEndPoint);
-                Listener.Listen(backlog: MaxConnections);
-                ServerLog.AddLogLine();
-                ServerLog.AddLogLine($"Socket server started");
-                ServerLog.AddLogLine($"Listening on IP {IPAddress} and port {Port}");
-                ServerLog.AddLogLine($"Maximum number of connections : {MaxConnections}");
-                while (Listening)
+                try
                 {
+                    Listener.Bind(serverEndPoint);
+                    Listener.Listen(backlog: MaxConnections);
                     ServerLog.AddLogLine();
-                    ServerLog.AddLogLine($"Waiting for client to accept");
-                    Client = await Listener.AcceptAsync();
-
-                    if (!Client.Connected)
+                    ServerLog.AddLogLine($"Socket server started");
+                    ServerLog.AddLogLine($"Listening on IP {IPAddress} and port {Port}");
+                    ServerLog.AddLogLine($"Maximum number of connections : {MaxConnections}");
+                    while (Listening)
                     {
-                        ServerLog.AddLogLine($"Client failed to connect");
-                        continue;
+                        ServerLog.AddLogLine();
+                        ServerLog.AddLogLine($"Waiting for client to accept");
+                        Client = await Listener.AcceptAsync();
+                        //Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+
+                        if (!Client.Connected)
+                        {
+                            ServerLog.AddLogLine($"Client failed to connect");
+                            continue;
+                        }
+                        ServerLog.AddLogLine();
+                        ServerLog.AddLogLine($"Client connected {((IPEndPoint)Client.RemoteEndPoint).Address} : {((IPEndPoint)Client.RemoteEndPoint).Port}");
+                        ServerLog.AddLogLine($"Number of possible connections left: {MaxConnections - ++ClientsConnected}");
+
+                        string[] videos = Helper.GetFileList(ServerURL);
+                        var buffer = Helper.ToByteArray(videos);
+
+                        Client.Send(buffer);
+                        CommunicateWithClient();
                     }
-                    ServerLog.AddLogLine();
-                    ServerLog.AddLogLine($"Client connected {((IPEndPoint)Client.RemoteEndPoint).Address} : {((IPEndPoint)Client.RemoteEndPoint).Port}");
-                    ServerLog.AddLogLine($"Number of possible connections left: {MaxConnections - ++ClientsConnected}");
+                    Listener.Dispose();
 
-                    string[] videos = Helper.GetFileList(ServerURL);
-                    var buffer = Helper.ToByteArray(videos);
-
-                    Client.Send(buffer);
-                    CommunicateWithClient(Client);
                 }
-                Listener.Dispose();
-
-            }
-            catch (System.Exception ex)
-            {
-                if (Listening)
+                catch (System.Exception ex)
                 {
-                    ServerLog.AddLogLine();
-                    ServerLog.AddLogLine($"Error : {ex.Message}");
+                    if (Listening)
+                    {
+                        ServerLog.AddLogLine();
+                        ServerLog.AddLogLine($"Error : {ex.Message}");
+                    }
                 }
-            }
+            } while (!SocketClosed);
         }
 
-        private void CommunicateWithClient(Socket client)
+        private void CommunicateWithClient()
         {
             Task.Run(() =>
             {
+
                 try
                 {
-                    using (client)
+                    using (Client)
                     {
                         bool completed = false;
                         do
                         {
                             byte[] readBuffer = new byte[1024];
-                            int read = client.Receive(readBuffer, 0, 1024, SocketFlags.None);
+                            int read = Client.Receive(readBuffer, 0, 1024, SocketFlags.None);
                             string fromClient = Encoding.UTF8.GetString(readBuffer, 0, read);
-                            ServerLog.AddLogLine($"Received from client {((IPEndPoint)client.RemoteEndPoint).Address} : {((IPEndPoint)client.RemoteEndPoint).Port}: {fromClient}");
+                            ServerLog.AddLogLine($"Received from client {((IPEndPoint)Client.RemoteEndPoint).Address} : {((IPEndPoint)Client.RemoteEndPoint).Port}: {fromClient}");
                             if (string.Compare(fromClient, "shutdown", ignoreCase: true) == 0)
                             {
-                                completed = true;
+
                                 ClientsConnected--;
                             }
                             string fullPath = Path.Combine(ServerURL, fromClient);
-                            
-                            client.SendFile(fullPath);
+
+                            Client.SendFile(fullPath);
 
                             ServerLog.AddLogLine($"Sending file to client: {fromClient}");
                             completed = true;
+                            SocketClosed = true;
+                            ClientsConnected--;
+
                         } while (!completed);
                     }
+
+
                     // TODO: Why is client disconnected after receiving the stream?
 
                     //client.Disconnect(reuseSocket: true);
                     //ServerLog.AddLogLine("Closed stream and client socket");
+
                 }
                 catch (Exception ex)
                 {
                     ServerLog.AddLogLine(ex.Message);
                 }
+
             });
         }
 
