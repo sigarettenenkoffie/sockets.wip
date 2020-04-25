@@ -46,7 +46,7 @@ namespace VideoStreamingClient
             IPAddress serverIP;
             string connection;
 
-            if (client.CheckIP(ip) == true)
+            if (Helper.CheckIP(ip))
             {
                 serverIP = IPAddress.Parse(ip);
                 connection = client.Send(serverIP, port);
