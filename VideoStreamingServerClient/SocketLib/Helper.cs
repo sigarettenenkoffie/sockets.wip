@@ -94,29 +94,22 @@ namespace SocketLib
         {
             try
             {
-                if (ip == null || ip.Length == 0)
-                {
+                if (string.IsNullOrEmpty(ip))
                     return false;
-                }
 
                 string[] parts = ip.Split(new[] { "." }, StringSplitOptions.None);
                 if (parts.Length != 4)
-                {
                     return false;
-                }
 
                 foreach (string s in parts)
                 {
                     int i = int.Parse(s);
                     if ((i < 0) || (i > 255))
-                    {
                         return false;
-                    }
                 }
+
                 if (ip.EndsWith("."))
-                {
                     return false;
-                }
 
                 return true;
             }

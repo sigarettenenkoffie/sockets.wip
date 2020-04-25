@@ -65,7 +65,7 @@ namespace SocketLib
         public string SendPlay(string selectedItem)
         {
             ClientSocket.Send(Encoding.UTF8.GetBytes(selectedItem));
-            int arrsize = 1000;
+            int arrsize = 100000;
             byte[] buffer = new byte[arrsize];
             int readBytes = -1;
             SocketError errorCode;
