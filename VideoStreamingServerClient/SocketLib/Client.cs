@@ -43,11 +43,13 @@ namespace SocketLib
 
             try
             {
-                ClientSocket.BeginConnect(server, null, null);                
-                GetResponse();
-
-                connection = "Succesful connected to server";               
-            }
+                ClientSocket.BeginConnect(server, null, null);
+                if (!ClientSocket.Connected)
+                {
+                    GetResponse();
+                }
+                connection = "Succesful connected to server";
+            }         
             catch
             {
                 connection = "No response from the server";                
