@@ -44,7 +44,7 @@ namespace SocketLib
             try
             {
                 ClientSocket.BeginConnect(server, null, null);                
-                GetFiles();
+                GetResponse();
 
                 connection = "Succesful connected to server";               
             }
@@ -55,25 +55,11 @@ namespace SocketLib
             return connection;
         }
 
-        public string[] GetFiles()
-        {
-            string[] files = Helper.FromByteArray(GetResponse());
-
-            //string[] arrFiles = Directory.GetFiles(files);
-            return files;
-        }
-
-        private byte[] GetResponse()
+        public string[] GetResponse()
         {
             byte[] serverResponse = new byte[8019];
-            //int messageLength;
             ClientSocket.Receive(serverResponse);
-
-            //messageLength = ClientSocket.Receive(serverResponse);
-            //response = Encoding.ASCII.GetString(serverResponse, 0, messageLength).ToUpper().Trim();
-            var response = Helper.FromByteArray(serverResponse);
-
-            return serverResponse;
+            return Helper.FromByteArray(serverResponse); 
         }
 
         public string SendPlay(string selectedItem)
