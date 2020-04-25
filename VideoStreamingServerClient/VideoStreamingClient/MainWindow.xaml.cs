@@ -31,9 +31,7 @@ namespace VideoStreamingClient
 
         private void GetVideoFiles()
         {
-            string[] videoFiles = client.GetFiles();
-
-            foreach (var video in videoFiles)
+            foreach (var video in client.GetResponse())
             {
                 cmbVideoFiles.Items.Add(video);
             }
@@ -46,7 +44,7 @@ namespace VideoStreamingClient
             IPAddress serverIP;
             string connection;
 
-            if (client.CheckIP(ip) == true)
+            if (Helper.CheckIP(ip))
             {
                 serverIP = IPAddress.Parse(ip);
                 connection = client.Send(serverIP, port);
@@ -80,8 +78,6 @@ namespace VideoStreamingClient
         {
             string selectedItem = cmbVideoFiles.SelectedItem.ToString();
             mdaVideoPlayer.Source = new System.Uri(client.SendPlay(selectedItem));
-            //client.SendPlay(selectedItem);
-
             mdaVideoPlayer.Play();
             btnPlay.IsEnabled = false;
             btnPause.IsEnabled = true;
